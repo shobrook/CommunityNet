@@ -8,12 +8,38 @@ import torch.nn as nn
 from torch_geometric.data import Data
 
 
-def extract_communities(graph):
-    return [Data(), ...]
+def _extract_communities(graph):
+    communities = []
+    for community in graph.communities:
+        node_to_c_node = {n: i for i, n in enumerate(community)}
+        community_edge_indices, community_edge_attrs = [], []
+        for i, edge in enumerate(graph.edge_index.t()):
+            is_within_community = sum(edge == n for n in community).bool().all()
+            if not is_within_community:
+                continue
+
+            c_edge = torch.tensor(
+                [node_to_c_node[n] for n in edge],
+                dtype=torch.long
+            )
+            community_edge_indices.append(c_edge)
+            community_edge_attrs.append(graph.edge_attr[i])
+
+        c_edge_index = torch.stack(community_edge_indices).t().contiguous()
+        c_edge_attr = torch.stack(community_edge_attrs)
+
+        community_graph = Data(
+            x=graph.x[community],
+            edge_index=c_edge_index,
+            edge_attr=c_edge_attr
+        )
+        communities.append(community_graph)
+
+    return communities
 
 
-def build_intercommunity_graph(graph):
-    return ic_edge_index, ic_edge_attr
+def _build_intercommunity_graph(graph):
+    return ic_edge_index, ic_edge_attr # TODO
 
 
 class EnsembleGNN(nn.Module):
@@ -28,7 +54,7 @@ class EnsembleGNN(nn.Module):
             gnn.reset_parameters()
 
     def forward(self, graph):
-        couples = zip(graph.communities, self.base_gnns)
+        couples = zip(_extract_communities(graph), self.base_gnns)
 
         if not self.num_jobs:
             outputs = [gnn(community) for community, gnn in couples]
@@ -56,9 +82,10 @@ class CommunityNet(nn.Module):
         self.output_gnn.reset_parameters()
 
     def forward(self, graph):
+        ic_edge_index, ic_edge_attr = _build_intercommunity_graph(graph)
         intercommunity_graph = Data(
             x=self.ensemble_gnn(graph),
-            edge_index=graph.intercommunity_edge_index,
-            edge_attr=graph.intercommunity_edge_attr
+            edge_index=ic_edge_index,
+            edge_attr=ic_edge_attr
         )
         return self.output_gnn(intercommunity_graph)
