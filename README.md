@@ -1,6 +1,7 @@
 # CommunityNet
 
-`CommunityNet` is a hierarchical Graph Neural Network (GNN) designed for graph datasets with community structure (e.g. social networks, molecules, etc.).<!--TODO: It outperforms a standard GNN on some benchmark datasets yadda yadda-->
+`CommunityNet` is a hierarchical Graph Neural Network (GNN) designed for graph datasets with community structure (e.g. social networks, molecules, etc.). It's designed to encode information in both the within-community level and the inter-community level.
+<!--TODO: It outperforms a standard GNN on some benchmark datasets yadda yadda-->
 
 <img src="demo.png" />
 
