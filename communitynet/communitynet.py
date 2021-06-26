@@ -39,7 +39,31 @@ def _extract_communities(graph):
 
 
 def _build_intercommunity_graph(graph):
-    return ic_edge_index, ic_edge_attr # TODO
+    ic_edge_index, ic_edge_attr = [], []
+    for i, src_community in enumerate(graph.communities):
+        for j, targ_community in enumerate(graph.communities):
+            if j > i:
+                break
+
+            # TODO: Prob a more efficient way to do this..
+            has_ic_edge, ic_edge_attrs = False, []
+            for index, edge in enumerate(graph.edge_index.t()):
+                src_node, targ_node = edge[0], edge[1]
+                if src_node in src_community and targ_node in targ_community:
+                    has_ic_edge = True
+                    ic_edge_attrs.append(graph.edge_attr[index])
+
+            if not has_ic_edge:
+                continue
+
+            ic_edge_index.append(torch.tensor([i, j], dtype=torch.long))
+            ic_edge_index.append(torch.tensor([j, i], dtype=torch.long))
+
+            ic_edge_attrs = torch.Tensor.float(torch.stack(ic_edge_attrs))
+            _ic_edge_attr = torch.mean(ic_edge_attrs)
+            ic_edge_attr.extend([_ic_edge_attr, _ic_edge_attr])
+
+    return ic_edge_index, ic_edge_attr
 
 
 class EnsembleGNN(nn.Module):
