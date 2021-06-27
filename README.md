@@ -15,11 +15,10 @@ $ pip install communitynet
 
 ## Usage
 
-Each graph you submit to `CommunityNet` must be an instance of `torch_geometric.data.Data` with an additional `communities` attribute. `data.communities` should hold a list of communities, where each community is a set of node indices. Every graph in your dataset must have the same number of communities.
-
 Before instantiating `CommunityNet`, you must define a "base" GNN and an "output" GNN. The _base GNN_ is used to create vector embeddings of each community in an input graph. These embeddings are used as node features in an "inter-community" graph, where each node represents a community and each edge is the mean of the edges between two communities. This graph is submitted to the _output GNN_ to make a prediction. Both GNNs can be constructed using the `GraphNet` and `MLP` PyTorch modules supplied by the library. For example, to construct the `CommunityNet` shown in the diagram above, you can do the following:
 
 ```python
+import torch.nn as nn
 from communitynet import GraphNet, MLP, CommunityNet
 
 # Example numbers (arbitrary)
@@ -37,7 +36,22 @@ community_net = CommunityNet(base_gnn, output_gnn, num_communities=3)
 
 `GraphNet` and `MLP` both have additional hyperparameters (e.g. hidden layers, dropout, etc.) which are described in the reference below. The `CommunityNet` class itself derives from `torch.nn.Module`, so it can be trained like any other PyTorch model.
 
-<!--TODO: Example Data object being submitted to community_net-->
+Each graph you submit to `CommunityNet` must be an instance of `torch_geometric.data.Data` with an additional `communities` attribute. `data.communities` should hold a list of communities, where each community is a set of node indices. For example:
+
+```python
+import torch
+from torch_geometric.data import Data
+
+edge_index = torch.tensor([[0, 1, 0, 2, 1, 2, 2, 3, 3, 4, 3, 5, 4, 5],
+                           [1, 0, 2, 0, 2, 1, 3, 2, 4, 3, 5, 3, 5, 4]],
+                          dtype=torch.long)
+x = torch.tensor([[-1], [0], [1], [0.5], [0.75], [-0.25]], dtype=torch.float)
+
+data = Data(x=x, edge_index=edge_index)
+data.communities = [{0, 1, 2}, {3, 4, 5}]
+```
+
+Note that every graph in your dataset must have the same number of communities.
 
 ## Reference
 
