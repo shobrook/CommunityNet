@@ -61,14 +61,14 @@ PyTorch module that implements a GNN. Uses `NNConv` (an edge-conditioned convolu
 
 **Parameters:**
 
-1. **`in_channels` _(int)_:** TODO
-2. **`out_channels` _(int)_:** TODO
-3. **`num_edge_features` _(int)_:** TODO
-4. **`hidden_channels` _(list, optional (default=[]))_:** TODO
-5. **`use_pooling` _(bool, optional (default=False))_:** TODO
-6. **`dropout_prob` _(float, optional (default=0.0))_:** TODO
-7. **`global_pooling` _(str, optional (default="mean"))_:** TODO
-8. **`activation` _(torch.nn.Module, optional (default=None))_:** TODO
+1. **`in_channels` _(int)_:** Number of node features
+2. **`out_channels` _(int)_:** Number of latent features
+3. **`num_edge_features` _(int)_:** Number of edge features
+4. **`hidden_channels` _(list, optional (default=[]))_:** List of hidden state sizes; number of channels is equivalent to the number of layers in the GNN
+5. **`use_pooling` _(bool, optional (default=False))_:** Whether or not to use top-k pooling
+6. **`dropout_prob` _(float, optional (default=0.0))_:** Dropout probability applied to each GNN layer
+7. **`global_pooling` _(str, optional (default="mean"))_:** Global pooling mode; options are: "mean", "add", and "max"
+8. **`activation` _(torch.nn.Module, optional (default=None))_:** Activation function used for `NNConv`
 9. **`edge_nn_kwargs` _(dict, optional (default={}))_:** TODO
 
 ### MLP
