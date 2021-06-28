@@ -92,7 +92,7 @@ class EnsembleGNN(nn.Module):
 
 
 class CommunityNet(nn.Module):
-    def __init__(self, base_gnn, output_gnn, num_communities, num_jobs=-1):
+    def __init__(self, base_gnn, output_gnn, num_communities, num_jobs=1):
         super(CommunityNet, self).__init__()
 
         self.ensemble_gnn = EnsembleGNN(
