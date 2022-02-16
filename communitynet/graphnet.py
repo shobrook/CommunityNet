@@ -5,7 +5,7 @@ from torch_geometric.nn import NNConv, global_mean_pool, global_add_pool, \
                                global_max_pool, TopKPooling
 
 # Local Modules
-from .mlp import MLP
+from communitynet.mlp import MLP
 
 GLOBAL_POOLING_LAYER_LOOKUP = {
     "mean": global_mean_pool,
