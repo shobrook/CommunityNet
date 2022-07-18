@@ -96,3 +96,7 @@ PyTorch module that implements a hierarchical GNN.
 <!--
 Helpers for creating datasets (if each graph has same # of nodes, diff # of nodes, etc.)
 -->
+
+# Authors
+
+`CommunityNet` was created by Jonathan Shobrook with the help of [Paul C. Bogdan](https://github.com/paulcbogdan/) as part of our research in the [Dolcos Lab](https://dolcoslab.beckman.illinois.edu/) at the Beckman Institute for Advanced Science and Technology.
