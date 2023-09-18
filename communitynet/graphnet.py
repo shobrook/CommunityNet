@@ -43,7 +43,7 @@ class GraphNet(nn.Module):
 
             edge_net = MLP(**{
                 **{
-                    "in_channels": num_edge_feats,
+                    "in_channels": num_edge_features,
                     "out_channels": in_channels * out_channels
                 },
                 **edge_nn_kwargs
